@@ -1,4 +1,11 @@
+[![ISSUES](https://img.shields.io/github/issues/Niible/node-crypto-com)](https://github.com/Niible/node-crypto-com/issues)
+![LICENSE](https://img.shields.io/github/license/Niible/node-crypto-com)
+
+
 # Node crypto.com/exchange API and Websocket
+
+[![NPM](https://nodei.co/npm/node-crypto-com.png?compact=true)](https://npmjs.org/package/node-crypto-com)
+
 
 Node module written in typescript wraping the crypto.com exchange API.
 
