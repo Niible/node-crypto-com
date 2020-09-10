@@ -1,0 +1,57 @@
+{
+  "name": "node-crypto-com",
+  "version": "1.0.2",
+  "description": "Node API wrapper for crypto.com exchange",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "start": "tsc && node dist/index.js",
+    "telegram": "tsc && node dist/utils/telegraf.js",
+    "test": "tsc && mocha -r ts-node/register test/*.ts --timeout 10000",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "git add -A src",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Niible/cryptocom.git"
+  },
+  "author": "Enzo Guilmer <enzo.guilmer@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Niible/cryptocom/issues"
+  },
+  "homepage": "https://github.com/Niible/cryptocom#readme",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "crypto-js": "^4.0.0",
+    "dotenv": "^8.2.0",
+    "rate-limit-ext": "^2.0.4",
+    "reconnecting-websocket": "^4.4.0",
+    "ws": "^7.3.1"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.2",
+    "@types/axios": "^0.14.0",
+    "@types/chai": "^4.2.12",
+    "@types/crypto-js": "^3.1.47",
+    "@types/dotenv": "^8.2.0",
+    "@types/mocha": "^8.0.3",
+    "@types/websocket": "^1.0.1",
+    "@types/ws": "^7.2.6",
+    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "chai": "^4.2.0",
+    "eslint": "^7.8.1",
+    "eslint-config-airbnb-typescript": "^10.0.0",
+    "eslint-plugin-import": "^2.22.0",
+    "mocha": "^8.1.1",
+    "ts-node": "^8.10.2"
+  },
+  "files": [
+    "dist/*"
+  ]
+}

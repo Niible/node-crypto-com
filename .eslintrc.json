@@ -1,0 +1,25 @@
+{
+  "env": {
+    "browser": true,
+    "es2020": true
+  },
+  "extends": [
+    "airbnb-typescript/base",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "no-param-reassign": "off",
+    "@typescript-eslint/restrict-plus-operands": "off",
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "consistent-return": "off",
+    "default-case": "off"
+  }
+}
