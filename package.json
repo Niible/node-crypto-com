@@ -1,6 +1,6 @@
 {
   "name": "node-crypto-com",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Node API wrapper for crypto.com exchange",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
