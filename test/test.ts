@@ -1,7 +1,7 @@
 import 'mocha';
 import { CryptoApi, CryptoPrivateApi, CryptoPublicApi } from '../src/cryptoClient/api';
 import {
-  InstrumentName, Period, OrderSide, OrderType,
+  InstrumentName, OrderSide, OrderType, Interval,
 } from '../src/types/crypto.h';
 import { CryptoWebsocket, CryptoWebsocketUser, CryptoWebsocketMarket } from '../src/cryptoClient/websocket';
 import { config } from 'dotenv';
@@ -68,18 +68,20 @@ describe('Test CryptoApi.public',
       expect(data.code).to.be.equal(0);
       expect(status).to.equal(200);
       expect(data.result).to.be.instanceof(Object);
+      expect(data.result.data).to.be.instanceof(Array);
     });
 
     it('getTrades should return a status 200, code 0 and data.result.data as array if instrument_name not set', async () => {
       const { data, status } = await cryptoApi.public.getTrades({});
       expect(data.code).to.be.equal(0);
       expect(status).to.equal(200);
+      expect(data.result).to.be.instanceof(Object);
       expect(data.result.data).to.be.instanceof(Array);
     });
 
     it('getCandlestick should return a status 200, code 0 and data.result.data as array', async () => {
       const { data, status } = await cryptoApi.public.getCandlestick(
-        { instrument_name: InstrumentName.CRO_USDT, timeframe: Period.Minutes_5 },
+        { instrument_name: InstrumentName.CRO_USDT, timeframe: Interval.Minutes_5 },
       );
       expect(data.code).to.be.equal(0);
       expect(status).to.equal(200);
@@ -187,7 +189,5 @@ describe('Test CryptoApi.private',
 //     it('cryptoWs.user should be instance of CryptoWebsocketUser', () => {
 //       expect(cryptoWs.user).to.be.instanceof(CryptoWebsocketUser);
 //     });
-//     cryptoWs.market.close()
-//     cryptoWs.user.close()
 //   });
 

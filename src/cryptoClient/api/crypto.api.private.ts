@@ -12,16 +12,31 @@ import {
   PrivateMethod,
   OrderType,
   OrderSide,
+  GetAccountSummaryResponse,
+  CreateOrderResponse,
+  CancelOrderResponse,
+  CancelAllOrderResponse,
+  GetOrderOpenOrdersResponse,
+  GetMyTradesResponse,
+  GetOrderDetailResponse,
+  GetOrderHistoryResponse,
 } from '../../types/crypto.h';
 
 export class CryptoPrivateApi extends CryptoApiBase {
-  public async getAccountSummary(params: AccountSummaryParams): Promise<Response> {
-    return this.post(PrivateMethod['get-account-summary'],
-      { ...params, axios: this.createRateLimit(100, 3) },
-      true);
+  public async getAccountSummary(
+    params: AccountSummaryParams,
+  ): Promise<Response<GetAccountSummaryResponse>> {
+    return this.post(
+      PrivateMethod['get-account-summary'],
+      {
+        ...params,
+        axios: this.createRateLimit(100, 3),
+      },
+      true,
+    ) as Promise<Response<GetAccountSummaryResponse>>;
   }
 
-  public async createOrder(params: CreateOrderParams): Promise<Response> {
+  public async createOrder(params: CreateOrderParams): Promise<Response<CreateOrderResponse>> {
     if (params.type === OrderType.MARKET && params.side === OrderSide.BUY) {
       if (!params.notional) {
         throw new Error('the param notional should be set for this type of order');
@@ -36,56 +51,83 @@ export class CryptoPrivateApi extends CryptoApiBase {
 
     return this.post(
       PrivateMethod['create-order'],
-      { ...params, axios: this.createRateLimit(100, 15) },
+      {
+        ...params,
+        axios: this.createRateLimit(100, 15),
+      },
       true,
-    );
+    ) as Promise<Response<CreateOrderResponse>>;
   }
 
-  public async cancelOrder(params: CancelOrderParams): Promise<Response> {
+  public async cancelOrder(params: CancelOrderParams): Promise<Response<CancelOrderResponse>> {
     return this.post(
       PrivateMethod['cancel-order'],
-      { ...params, axios: this.createRateLimit(100, 15) },
+      {
+        ...params,
+        axios: this.createRateLimit(100, 15),
+      },
       true,
-    );
+    ) as Promise<Response<CancelOrderResponse>>;
   }
 
-  public async cancelAllOrders(params: CancelAllOrdersParams): Promise<Response> {
+  public async cancelAllOrders(
+    params: CancelAllOrdersParams,
+  ): Promise<Response<CancelAllOrderResponse>> {
     return this.post(
       PrivateMethod['cancel-all-orders'],
-      { ...params, axios: this.createRateLimit(100, 15) },
+      {
+        ...params,
+        axios: this.createRateLimit(100, 15),
+      },
       true,
-    );
+    ) as Promise<Response<CancelAllOrderResponse>>;
   }
 
-  public async getOrderHistory(params: GetOrderHistory): Promise<Response> {
+  public async getOrderHistory(
+    params: GetOrderHistory,
+  ): Promise<Response<GetOrderHistoryResponse>> {
     return this.post(
       PrivateMethod['get-order-history'],
-      { ...params, axios: this.createRateLimit(1000, 1) },
+      {
+        ...params,
+        axios: this.createRateLimit(1000, 1),
+      },
       true,
-    );
+    ) as Promise<Response<GetOrderHistoryResponse>>;
   }
 
-  public async getOpenOrders(params: GetOpenOrdersParams): Promise<Response> {
+  public async getOpenOrders(
+    params: GetOpenOrdersParams,
+  ): Promise<Response<GetOrderOpenOrdersResponse>> {
     return this.post(
       PrivateMethod['get-open-orders'],
       { ...params, axios: this.createRateLimit(100, 3) },
       true,
-    );
+    ) as Promise<Response<GetOrderOpenOrdersResponse>>;
   }
 
-  public async getOrderDetail(params: GetOrderDetailParams): Promise<Response> {
+  public async getOrderDetail(
+    params: GetOrderDetailParams,
+  )
+    : Promise<Response<GetOrderDetailResponse>> {
     return this.post(
       PrivateMethod['get-order-detail'],
-      { ...params, axios: this.createRateLimit(100, 30) },
+      {
+        ...params,
+        axios: this.createRateLimit(100, 30),
+      },
       true,
-    );
+    ) as Promise<Response<GetOrderDetailResponse>>;
   }
 
-  public async getTrades(params: GetTradesParams): Promise<Response> {
+  public async getTrades(params: GetTradesParams): Promise<Response<GetMyTradesResponse>> {
     return this.post(
       PrivateMethod['get-trades'],
-      { ...params, axios: this.createRateLimit(1000, 1) },
+      {
+        ...params,
+        axios: this.createRateLimit(1000, 1),
+      },
       true,
-    );
+    ) as Promise<Response<GetMyTradesResponse>>;
   }
 }

@@ -67,7 +67,7 @@ export class CryptoApiBase {
   public async get(
     method: string,
     params: Params = {},
-  ): Promise<Response> {
+  ): Promise<Response<unknown>> {
     const url = `${this.api}${method}`;
     const axios = params.axios ? params.axios : this.createRateLimit(1000, 100);
     try {
@@ -85,7 +85,7 @@ export class CryptoApiBase {
     method: string,
     params: Params = {},
     sign?: boolean,
-  ): Promise<Response> {
+  ): Promise<Response<unknown>> {
     let request = this.buildMessage(method, params);
     if (sign) request = this.signRequest(request);
     const url = `${this.api}${method}`;

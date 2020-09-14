@@ -19,7 +19,7 @@ npm install node-crypto-com --save
 ## Exchange API
 
 ```ts
-import { CryptoApi, Coin } from 'node-crypto-com';
+import { CryptoApi, Currency } from 'node-crypto-com';
 
 
 async function main() {
@@ -49,7 +49,7 @@ async function main() {
   console.log(status); // 200
 
   const accountSummary = await api.private.getAccountSummary({
-    currency: Coin.Cro
+    currency: Currency.Cro
   });
 
   console.log(accountSummary.data.result);

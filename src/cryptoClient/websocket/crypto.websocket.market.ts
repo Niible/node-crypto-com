@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 import { CryptoWebsocketBase } from './crypto.websocket.base';
-import { InstrumentName, Period } from '../../types/crypto.h';
+import { InstrumentName, Interval } from '../../types/crypto.h';
 
 export class CryptoWebsocketMarket extends CryptoWebsocketBase {
   constructor(apiKey: string, apiSecret: string) {
@@ -25,7 +25,7 @@ export class CryptoWebsocketMarket extends CryptoWebsocketBase {
     this.subscribe([channel]);
   }
 
-  candlestick(instrumentName: InstrumentName | string, period: Period): void {
+  candlestick(instrumentName: InstrumentName | string, period: Interval): void {
     const channel = `candlestick.${period}.${instrumentName}`;
     this.subscribe([channel]);
   }
