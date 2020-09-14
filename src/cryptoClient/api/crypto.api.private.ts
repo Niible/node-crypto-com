@@ -28,11 +28,11 @@ export class CryptoPrivateApi extends CryptoApiBase {
   ): Promise<Response<GetAccountSummaryResponse>> {
     return this.post(
       PrivateMethod['get-account-summary'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(100, 3),
       },
-      true,
     ) as Promise<Response<GetAccountSummaryResponse>>;
   }
 
@@ -51,22 +51,22 @@ export class CryptoPrivateApi extends CryptoApiBase {
 
     return this.post(
       PrivateMethod['create-order'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(100, 15),
       },
-      true,
     ) as Promise<Response<CreateOrderResponse>>;
   }
 
   public async cancelOrder(params: CancelOrderParams): Promise<Response<CancelOrderResponse>> {
     return this.post(
       PrivateMethod['cancel-order'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(100, 15),
       },
-      true,
     ) as Promise<Response<CancelOrderResponse>>;
   }
 
@@ -75,11 +75,11 @@ export class CryptoPrivateApi extends CryptoApiBase {
   ): Promise<Response<CancelAllOrderResponse>> {
     return this.post(
       PrivateMethod['cancel-all-orders'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(100, 15),
       },
-      true,
     ) as Promise<Response<CancelAllOrderResponse>>;
   }
 
@@ -88,11 +88,11 @@ export class CryptoPrivateApi extends CryptoApiBase {
   ): Promise<Response<GetOrderHistoryResponse>> {
     return this.post(
       PrivateMethod['get-order-history'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(1000, 1),
       },
-      true,
     ) as Promise<Response<GetOrderHistoryResponse>>;
   }
 
@@ -101,8 +101,11 @@ export class CryptoPrivateApi extends CryptoApiBase {
   ): Promise<Response<GetOrderOpenOrdersResponse>> {
     return this.post(
       PrivateMethod['get-open-orders'],
-      { ...params, axios: this.createRateLimit(100, 3) },
+      params,
       true,
+      {
+        axios: this.createRateLimit(100, 3),
+      },
     ) as Promise<Response<GetOrderOpenOrdersResponse>>;
   }
 
@@ -112,22 +115,22 @@ export class CryptoPrivateApi extends CryptoApiBase {
     : Promise<Response<GetOrderDetailResponse>> {
     return this.post(
       PrivateMethod['get-order-detail'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(100, 30),
       },
-      true,
     ) as Promise<Response<GetOrderDetailResponse>>;
   }
 
   public async getTrades(params: GetTradesParams): Promise<Response<GetMyTradesResponse>> {
     return this.post(
       PrivateMethod['get-trades'],
+      params,
+      true,
       {
-        ...params,
         axios: this.createRateLimit(1000, 1),
       },
-      true,
     ) as Promise<Response<GetMyTradesResponse>>;
   }
 }

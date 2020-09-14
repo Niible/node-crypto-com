@@ -1,7 +1,9 @@
 import { RateLimitExt } from 'rate-limit-ext';
 import Axios, { AxiosStatic } from 'axios';
 import { HmacSHA256, enc } from 'crypto-js';
-import { Params, Request, Response } from '../../types/crypto.h';
+import {
+  Params, Request, Response, Options,
+} from '../../types/crypto.h';
 
 export class CryptoApiBase {
   protected apiSecret: string;
@@ -56,9 +58,6 @@ export class CryptoApiBase {
       nonce: this.get_nonce(),
     };
     if (params) {
-      if (params.axios) {
-        delete params.axios;
-      }
       message.params = params;
     }
     return message;
@@ -67,9 +66,10 @@ export class CryptoApiBase {
   public async get(
     method: string,
     params: Params = {},
+    options?: Options,
   ): Promise<Response<unknown>> {
     const url = `${this.api}${method}`;
-    const axios = params.axios ? params.axios : this.createRateLimit(1000, 100);
+    const axios = options.axios ? options.axios : Axios;
     try {
       const response = await axios.get(url, { params });
       const { status, data } = response;
@@ -85,11 +85,12 @@ export class CryptoApiBase {
     method: string,
     params: Params = {},
     sign?: boolean,
+    options?: Options,
   ): Promise<Response<unknown>> {
     let request = this.buildMessage(method, params);
     if (sign) request = this.signRequest(request);
     const url = `${this.api}${method}`;
-    const axios = params.axios ? params.axios : this.createRateLimit(100, 3);
+    const axios = options.axios ? options.axios : Axios;
     try {
       const response = await axios.post(url, request, { headers: { 'content-type': 'application/json' } });
       const { status, data } = response;

@@ -1,12 +1,11 @@
 import { AxiosStatic } from 'axios';
 
-interface AxiosParams {
+export interface Options {
   axios?: AxiosStatic
 }
 
 export type Params =
   (
-    AxiosParams &
     WebsocketParams
   ) &
   (
