@@ -18,7 +18,7 @@ export class CryptoWebsocketBase {
 
   protected isReady = false;
 
-  protected response: Result[] = [];
+  protected response: Result<unknown>[] = [];
 
   constructor(apiKey: string, apiSecret: string, websocket: WebSocket) {
     this.apiKey = apiKey;
@@ -91,11 +91,11 @@ export class CryptoWebsocketBase {
     this.send(request);
   }
 
-  private parseError(result: Result): Result {
+  private parseError(result: Result<unknown>): Result<unknown> {
     return result;
   }
 
-  private parseResult(result: Result): Result | void {
+  private parseResult(result: Result<unknown>): Result<unknown> | void {
     if (result.code !== 0 && result.method !== PublicMethod.heartbeat) {
       return this.parseError(result);
     }
@@ -111,7 +111,7 @@ export class CryptoWebsocketBase {
     }
   }
 
-  private handlePublicMethod(result: Result): Result | void {
+  private handlePublicMethod(result: Result<unknown>): Result<unknown> | void {
     if (result.method === 'public/heartbeat') {
       result.method = 'public/respond-heartbeat';
       this.websocket.send(JSON.stringify(result));
@@ -124,11 +124,11 @@ export class CryptoWebsocketBase {
     }
   }
 
-  private handlePrivateMethod(data: Result): Result {
+  private handlePrivateMethod(data: Result<unknown>): Result<unknown> {
     return data;
   }
 
-  private handleSubscribe(data: Result): Result {
+  private handleSubscribe(data: Result<unknown>): Result<unknown> {
     return data;
   }
 
@@ -136,7 +136,7 @@ export class CryptoWebsocketBase {
     return this.response.length > 0;
   }
 
-  async getNextResponse(): Promise<Result> {
+  async getNextResponse(): Promise<Result<unknown>> {
     while (!this.hasResponses()) {
       // eslint-disable-next-line no-await-in-loop
       await sleep(100);

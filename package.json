@@ -18,14 +18,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Niible/cryptocom.git"
+    "url": "git+https://github.com/Niible/node-crypto-com.git"
   },
   "author": "Enzo Guilmer <enzo.guilmer@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Niible/cryptocom/issues"
+    "url": "https://github.com/Niible/node-crypto-com/issues"
   },
-  "homepage": "https://github.com/Niible/cryptocom#readme",
+  "homepage": "https://github.com/Niible/node-crypto-com#readme",
   "dependencies": {
     "axios": "^0.19.2",
     "crypto-js": "^4.0.0",
@@ -35,7 +35,6 @@
     "ws": "^7.3.1"
   },
   "devDependencies": {
-    "typescript": "^4.0.2",
     "@types/axios": "^0.14.0",
     "@types/chai": "^4.2.12",
     "@types/crypto-js": "^3.1.47",
@@ -43,13 +42,14 @@
     "@types/mocha": "^8.0.3",
     "@types/websocket": "^1.0.1",
     "@types/ws": "^7.2.6",
-    "@typescript-eslint/eslint-plugin": "^4.1.0",
+    "@typescript-eslint/eslint-plugin": "^4.1.1",
     "chai": "^4.2.0",
-    "eslint": "^7.8.1",
+    "eslint": "^7.9.0",
     "eslint-config-airbnb-typescript": "^10.0.0",
     "eslint-plugin-import": "^2.22.0",
-    "mocha": "^8.1.1",
-    "ts-node": "^8.10.2"
+    "mocha": "^8.1.3",
+    "ts-node": "^8.10.2",
+    "typescript": "^4.0.2"
   },
   "files": [
     "dist/*"
