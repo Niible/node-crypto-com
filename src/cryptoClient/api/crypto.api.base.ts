@@ -1,9 +1,7 @@
 import { RateLimitExt } from 'rate-limit-ext';
 import Axios, { AxiosStatic } from 'axios';
 import { HmacSHA256, enc } from 'crypto-js';
-import {
-  Params, Request, Response, Options,
-} from '../../types/crypto.h';
+import { Request, Options, Response } from '../../types/api.types';
 
 export class CryptoApiBase {
   protected apiSecret: string;
@@ -36,7 +34,7 @@ export class CryptoApiBase {
     return i;
   }
 
-  public signRequest(request: Request): Request {
+  public signRequest(request: Request<unknown>): Request<unknown> {
     const {
       id, method, params, nonce,
     } = request;
@@ -51,21 +49,21 @@ export class CryptoApiBase {
     return request;
   }
 
-  public buildMessage(method: string, params?: Params): Request {
-    const message: Request = {
+  public buildMessage(method: string, params?: unknown): Request<unknown> {
+    const request: Request<unknown> = {
       id: this.next_id(),
       method,
       nonce: this.get_nonce(),
     };
     if (params) {
-      message.params = params;
+      request.params = params;
     }
-    return message;
+    return request;
   }
 
   public async get(
     method: string,
-    params: Params = {},
+    params = {} as unknown,
     options?: Options,
   ): Promise<Response<unknown>> {
     const url = `${this.api}${method}`;
@@ -83,7 +81,7 @@ export class CryptoApiBase {
 
   public async post(
     method: string,
-    params: Params = {},
+    params = {} as unknown,
     sign?: boolean,
     options?: Options,
   ): Promise<Response<unknown>> {

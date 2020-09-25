@@ -1,26 +1,27 @@
-import WebSocket from 'ws';
 import { HmacSHA256, enc } from 'crypto-js';
 import { CryptoWebsocketBase } from './crypto.websocket.base';
 import {
   PublicMethod,
-  AccountSummaryParams,
   PrivateMethod,
-  CreateOrderParams,
   OrderType,
   OrderSide,
+  InstrumentName,
+} from '../../types';
+import {
+  CreateOrderParams,
   CancelOrderParams,
   CancelAllOrdersParams,
   GetOrderHistory,
   GetOpenOrdersParams,
   GetOrderDetailParams,
   GetTradesParams,
-  Params,
   Request,
-} from '../../types/crypto.h';
+  GetAccountSummaryParams,
+} from '../../types/api.types';
 
 export class CryptoWebsocketUser extends CryptoWebsocketBase {
   constructor(apiKey: string, apiSecret: string) {
-    super(apiKey, apiSecret, new WebSocket('wss://stream.crypto.com/v2/user'));
+    super(apiKey, apiSecret, 'wss://stream.crypto.com/v2/user');
     this.setup();
   }
 
@@ -30,7 +31,7 @@ export class CryptoWebsocketUser extends CryptoWebsocketBase {
     this.send(this.signRequest(request));
   }
 
-  public signRequest(request: Request): Request {
+  public signRequest(request: Request<unknown>): Request<unknown> {
     const {
       id, method, params, nonce,
     } = request;
@@ -45,58 +46,87 @@ export class CryptoWebsocketUser extends CryptoWebsocketBase {
     return request;
   }
 
-  getInstruments(): void {
-    this.get(PublicMethod['get-instruments']);
+  getInstruments(): string {
+    return this.get(PublicMethod['get-instruments']);
   }
 
-  getAccountSummary(params: AccountSummaryParams): void {
-    this.get(PrivateMethod['get-account-summary'], params);
+  getAccountSummary(params: GetAccountSummaryParams): string {
+    return this.get(PrivateMethod['get-account-summary'], params);
   }
 
-  createOrder(params: CreateOrderParams): void {
+  createOrder(params: CreateOrderParams): string {
     if (params.type === OrderType.MARKET && params.side === OrderSide.BUY) {
       if (!params.notional) {
-        throw new Error('the param notional should be set for this type of order');
+        throw new Error(
+          'the param notional should be set for this type of order',
+        );
       }
     } else if (!params.quantity) {
-      throw new Error('the param quantity should be set for this type of order');
+      throw new Error(
+        'the param quantity should be set for this type of order',
+      );
     }
 
     if (params.price && params.type === OrderType.MARKET) {
-      throw new Error('the param price should not be set for this type of order');
+      throw new Error(
+        'the param price should not be set for this type of order',
+      );
     }
 
-    this.get(PrivateMethod['create-order'], params);
+    return this.get(PrivateMethod['create-order'], params);
   }
 
   cancelOrder(params: CancelOrderParams): void {
     this.get(PrivateMethod['cancel-order'], params);
   }
 
-  cancelAllOrders(params: CancelAllOrdersParams): void {
-    this.get(PrivateMethod['cancel-all-orders'], params);
+  cancelAllOrders(params: CancelAllOrdersParams): string {
+    return this.get(PrivateMethod['cancel-all-orders'], params);
   }
 
-  getOrderHistory(params: GetOrderHistory): void {
-    this.get(PrivateMethod['get-order-history'], params);
+  getOrderHistory(params: GetOrderHistory): string {
+    return this.get(PrivateMethod['get-order-history'], params);
   }
 
-  getOpenOrders(params: GetOpenOrdersParams): void {
-    this.get(PrivateMethod['get-open-orders'], params);
+  getOpenOrders(params: GetOpenOrdersParams): string {
+    return this.get(PrivateMethod['get-open-orders'], params);
   }
 
-  getOrderDetail(params: GetOrderDetailParams): void {
-    this.get(PrivateMethod['get-order-detail'], params);
+  getOrderDetail(params: GetOrderDetailParams): string {
+    return this.get(PrivateMethod['get-order-detail'], params);
   }
 
-  getTrades(params: GetTradesParams): void {
-    this.get(PrivateMethod['get-trades'], params);
+  getTrades(params: GetTradesParams): string {
+    return this.get(PrivateMethod['get-trades'], params);
   }
 
-  public get(method: PublicMethod | PrivateMethod, params?: Params, sign?: boolean): void {
+  public get(
+    method: PublicMethod | PrivateMethod,
+    params?: unknown,
+    sign?: boolean,
+  ): string {
     if (!this.isReady) return;
     let request = this.buildMessage(method, params);
     if (sign) request = this.signRequest(request);
     this.send(request);
+    return method;
+  }
+
+  orderSubscribe(instrumentName: InstrumentName | string): string {
+    const channel = `user.order.${instrumentName}`;
+    this.subscribe(channel);
+    return channel;
+  }
+
+  tradeSubscribe(instrumentName: InstrumentName | string): string {
+    const channel = `user.trade.${instrumentName}`;
+    this.subscribe(channel);
+    return channel;
+  }
+
+  balanceSubscribe(): string {
+    const channel = 'user.balance';
+    this.subscribe(channel);
+    return channel;
   }
 }

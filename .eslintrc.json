@@ -20,6 +20,11 @@
     "class-methods-use-this": "off",
     "@typescript-eslint/no-unsafe-call": "off",
     "consistent-return": "off",
-    "default-case": "off"
+    "default-case": "off",
+    "no-restricted-syntax": "off",
+    "no-bitwise": "off",
+    "no-prototype-builtins": "off",
+    "@typescript-eslint/ban-types": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

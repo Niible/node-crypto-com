@@ -1,12 +1,17 @@
 import WebSocket from 'ws';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import {
-  Params, Result, PublicMethod, Request,
+  PublicMethod,
 } from '../../types/crypto.h';
 import { sleep } from '../../utils/sleep';
+import { hasOwnProperty } from '../../utils/hasOwnProperty';
+import { Request } from '../../types/api.types';
+import { Result, SubscriptionResponse } from '../../types/websocket.types';
 
 export class CryptoWebsocketBase {
   public isAuthenticated = false;
+
+  private url: string;
 
   protected apiSecret: string;
 
@@ -18,27 +23,22 @@ export class CryptoWebsocketBase {
 
   protected isReady = false;
 
-  protected response: Result<unknown>[] = [];
+  protected subscriptions = [];
 
-  constructor(apiKey: string, apiSecret: string, websocket: WebSocket) {
+  protected readonly events: Record<string, Function[]> = {};
+
+  constructor(apiKey: string, apiSecret: string, url: string) {
     this.apiKey = apiKey;
     this.apiSecret = apiSecret;
-    this.websocket = new ReconnectingWebSocket(websocket.url, [], {
-      WebSocket,
-      debug: false,
-      connectionTimeout: 4e3,
-      maxReconnectionDelay: 10e3,
-      maxRetries: Infinity,
-      minReconnectionDelay: 4e3,
-    });
+    this.url = url;
     this.nextId = 1;
+    this.open();
   }
 
-  protected setup(callback?: CallableFunction): void {
-    this.websocket.onmessage = (message: { data: string }) => {
-      if (callback) callback(message);
-      const data = this.parseResult(JSON.parse(message.data));
-      if (data) this.response.push(data);
+  protected setup(): void {
+    this.websocket.onmessage = (message) => {
+      const payload = JSON.parse(message.data);
+      this.handlePayload(payload);
     };
     this.websocket.onopen = () => {
       this.isReady = true;
@@ -63,8 +63,8 @@ export class CryptoWebsocketBase {
     return true;
   }
 
-  public buildMessage(method: string, params?: Params): Request {
-    const message: Request = {
+  public buildMessage(method: string, params?: unknown): Request<unknown> {
+    const message: Request<unknown> = {
       id: this.next_id(),
       method,
       nonce: this.get_nonce(),
@@ -75,72 +75,113 @@ export class CryptoWebsocketBase {
     return message;
   }
 
-  public send(request: Request): void {
+  public send(request: Request<unknown>): void {
     this.websocket.send(JSON.stringify(request));
   }
 
-  public subscribe(channels: string[]): void {
+  public subscribe(...channels: string[]): void {
     if (!this.isReady) return;
+    this.subscriptions.push(...channels);
+    for (const channel of channels) {
+      if (!~this.subscriptions.indexOf(channel)) {
+        this.subscriptions.push(channel);
+      }
+    }
     const request = this.buildMessage('subscribe', { channels });
     this.send(request);
   }
 
-  public unsubscribe(channels: string[]): void {
+  public unsubscribe(...channels: string[]): void {
     if (!this.isReady) return;
+
+    for (const channel of channels) {
+      const pos = this.subscriptions.indexOf(channel);
+      if (~pos) {
+        this.subscriptions.splice(pos, 1);
+      }
+    }
+
     const request = this.buildMessage('unsubscribe', { channels });
     this.send(request);
   }
 
-  private parseError(result: Result<unknown>): Result<unknown> {
-    return result;
-  }
+  handlePayload(payload: Result<unknown>): void {
+    const { method, code, result } = payload;
+    if (method === PublicMethod.heartbeat) {
+      payload.method = 'public/respond-heartbeat';
+      return this.websocket.send(JSON.stringify(payload));
+    }
 
-  private parseResult(result: Result<unknown>): Result<unknown> | void {
-    if (result.code !== 0 && result.method !== PublicMethod.heartbeat) {
-      return this.parseError(result);
+    if (method === 'public/auth') {
+      if (code === 0) this.isAuthenticated = true;
+      return this.emit(method, payload);
     }
-    if (result.method === 'subscribe') {
-      return this.handleSubscribe(result);
-    }
-    const publicOrPrivate = result.method.split('/')[0];
-    switch (publicOrPrivate) {
-      case 'public':
-        return this.handlePublicMethod(result);
-      case 'private':
-        return this.handlePrivateMethod(result);
-    }
-  }
 
-  private handlePublicMethod(result: Result<unknown>): Result<unknown> | void {
-    if (result.method === 'public/heartbeat') {
-      result.method = 'public/respond-heartbeat';
-      this.websocket.send(JSON.stringify(result));
-    } else if (result.method === 'public/auth') {
-      if (result.code === 0) {
-        this.isAuthenticated = true;
+    if (method === 'subscribe') {
+      if (result instanceof Object
+        && hasOwnProperty(result, 'subscription')
+          && typeof result.subscription === 'string') {
+        this.emit(result.subscription, payload);
+        if (result instanceof Object
+          && hasOwnProperty(result, 'channel')
+            && typeof result.channel === 'string'
+              && result.subscription !== result.channel) {
+          return this.emit(result.channel, payload);
+        }
       }
-    } else {
-      return result;
+      return;
+    }
+
+    if (method.includes('public') || method.includes('private')) {
+      return this.emit(method, payload);
     }
   }
 
-  private handlePrivateMethod(data: Result<unknown>): Result<unknown> {
-    return data;
+  public close(): void {
+    this.websocket.close();
   }
 
-  private handleSubscribe(data: Result<unknown>): Result<unknown> {
-    return data;
-  }
-
-  public hasResponses(): boolean {
-    return this.response.length > 0;
-  }
-
-  async getNextResponse(): Promise<Result<unknown>> {
-    while (!this.hasResponses()) {
-      // eslint-disable-next-line no-await-in-loop
-      await sleep(100);
+  public open(): void {
+    if (!this.websocket || (this.websocket && !this.websocket.OPEN)) {
+      this.websocket = new ReconnectingWebSocket(this.url, [], {
+        WebSocket,
+        debug: false,
+        connectionTimeout: 4e3,
+        maxReconnectionDelay: 10e3,
+        maxRetries: Infinity,
+        minReconnectionDelay: 4e3,
+      });
     }
-    return this.response.shift();
+  }
+
+  public on<T>(
+    streamName: string,
+    cb: (data: SubscriptionResponse<T>) => void,
+  ): void {
+    if (!this.events[streamName]) {
+      this.events[streamName] = [];
+    }
+    this.events[streamName].push(cb);
+  }
+
+  public off<T>(
+    streamName: string,
+    callback: (data: SubscriptionResponse<T>) => void,
+  ): void {
+    if (!this.events[streamName]) return;
+    const index = this.events[streamName].indexOf(callback);
+    if (!~index) return;
+
+    this.events[streamName].splice(index, 1);
+
+    if (!this.events[streamName].length) {
+      delete this.events[streamName];
+    }
+  }
+
+  protected emit(streamName: string, ...args: any[]): void {
+    for (const handler of (this.events[streamName] || [])) {
+      handler(...args);
+    }
   }
 }

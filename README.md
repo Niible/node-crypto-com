@@ -1,15 +1,14 @@
 [![ISSUES](https://img.shields.io/github/issues/Niible/node-crypto-com)](https://github.com/Niible/node-crypto-com/issues)
 ![LICENSE](https://img.shields.io/github/license/Niible/node-crypto-com)
 
-
 # Node crypto.com/exchange API and Websocket
 
 [![NPM](https://nodei.co/npm/node-crypto-com.png?compact=true)](https://npmjs.org/package/node-crypto-com)
 
-
 Node module written in typescript wraping the crypto.com exchange API.
 
 # Installation
+
 ```
 npm install node-crypto-com --save
 ```
@@ -19,11 +18,10 @@ npm install node-crypto-com --save
 ## Exchange API
 
 ```ts
-import { CryptoApi, Currency } from 'node-crypto-com';
-
+import { CryptoApi, Currency } from "node-crypto-com";
 
 async function main() {
-  const api = new CryptoApi('apiKey', 'apiSecret');
+  const api = new CryptoApi("apiKey", "apiSecret");
 
   const { data, status } = await api.public.getInstruments();
   console.log(data.result);
@@ -49,7 +47,7 @@ async function main() {
   console.log(status); // 200
 
   const accountSummary = await api.private.getAccountSummary({
-    currency: Currency.Cro
+    currency: Currency.Cro,
   });
 
   console.log(accountSummary.data.result);
@@ -66,7 +64,6 @@ async function main() {
     ]
   }
   */
-
 }
 
 main();
@@ -74,8 +71,7 @@ main();
 
 For `api.public.***` you do not need API's keys.
 
-For `api.private.***` you will need apiKey and apiSecret. 
-
+For `api.private.***` you will need apiKey and apiSecret.
 
 ## Exchange Websocket
 
@@ -87,10 +83,11 @@ async function main() {
   const ws = new CryptoWebsocket('apiKey', 'apiSecret');
 
   await ws.market.waitWebsocket();
-  ws.market.bookSubscribe(InstrumentName.CRO_USDT, 10);
-  while (true) {
-    const response = await ws.market.getNextResponse();
+  const event = ws.market.bookSubscribe(InstrumentName.CRO_USDT, 10);
+
+  market.on<BookSubscription>(event, (data) => {
     console.log(response.result);
+  }
     /*
     {
       instrument_name: 'CRO_USDT',
@@ -99,45 +96,31 @@ async function main() {
       depth: 10,
       data: [ { bids: [Array], asks: [Array], t: 1599760003788 } ]
     }
-    {
-      instrument_name: 'CRO_USDT',
-      subscription: 'book.CRO_USDT.10',
-      channel: 'book',
-      depth: 10,
-      data: [ { bids: [Array], asks: [Array], t: 1599760005028 } ]
-    }
-    {
-      instrument_name: 'CRO_USDT',
-      subscription: 'book.CRO_USDT.10',
-      channel: 'book',
-      depth: 10,
-      data: [ { bids: [Array], asks: [Array], t: 1599760006244 } ]
-    }
     */
   }
 }
 
-
 main();
 ```
 
-Do not forget to `waitWebsocket()` before any subscription ! 
+Do not forget to `waitWebsocket()` before any subscription !
 
 ```ts
-import { CryptoWebsocket } from 'node-crypto-com';
-
+import { CryptoWebsocket } from "node-crypto-com";
 
 async function main() {
-  const ws = new CryptoWebsocket('apiKey', 'apiSecret');
+  const ws = new CryptoWebsocket("apiKey", "apiSecret");
 
   await ws.user.waitWebsocket();
   ws.user.authenticate();
-  ws.user.getOrderDetail({
-    order_id: '735251952879380642'
+  
+  const event = ws.user.getOrderDetail({
+    order_id: "735251952879380642",
   });
-  while (true) {
-    const response = await ws.user.getNextResponse();
-    console.log(response.result);
+
+  ws.user.on<OrderDetailResult>(event, (data) => {
+    console.log(data.result);
+  }
     /*
     {
       trade_list: [
@@ -176,29 +159,24 @@ async function main() {
   }
 }
 
-
-main()
+main();
 ```
 
 For user websocket do not forget to `waitWebsocket()` AND `authenticate()` !!
 
-
 ```ts
-import { CryptoWebsocket } from 'node-crypto-com'
-
+import { CryptoWebsocket } from "node-crypto-com";
 
 async function main() {
-  const ws = new CryptoWebsocket('apiKey', 'apiSecret');
+  const ws = new CryptoWebsocket("apiKey", "apiSecret");
 
-  await ws.user.waitWebsocket()
-  ws.market.subscribe(['user.balance'])
-  ws.user.unsubscribe(['user.balance'])
+  await ws.user.waitWebsocket();
+  ws.market.subscribe(["user.balance"]);
+  ws.user.unsubscribe(["user.balance"]);
 }
-
 ```
 
 You can subscribe manually to channels and unsubscribe too.
-
 
 # Documentation
 

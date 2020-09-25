@@ -1,32 +1,37 @@
-import WebSocket from 'ws';
 import { CryptoWebsocketBase } from './crypto.websocket.base';
-import { InstrumentName, Interval } from '../../types/crypto.h';
+import {
+  InstrumentName, Interval,
+} from '../../types/crypto.h';
 
 export class CryptoWebsocketMarket extends CryptoWebsocketBase {
   constructor(apiKey: string, apiSecret: string) {
-    super(apiKey, apiSecret, new WebSocket('wss://stream.crypto.com/v2/market'));
+    super(apiKey, apiSecret, 'wss://stream.crypto.com/v2/market');
     this.setup();
   }
 
-  bookSubscribe(instrumentName: InstrumentName | string, depth = 10): void {
+  bookSubscribe(instrumentName: InstrumentName | string, depth = 10): string {
     const channel = `book.${instrumentName}.${depth}`;
-    this.subscribe([channel]);
+    this.subscribe(channel);
+    return channel;
   }
 
-  tickerSubcribe(instrumentName?: InstrumentName | string): void {
+  tickerSubscribe(instrumentName?: InstrumentName | string): string {
     let channel = 'ticker';
     if (instrumentName) channel += `.${instrumentName}`;
-    this.subscribe([channel]);
+    this.subscribe(channel);
+    return channel;
   }
 
-  tradeSubcribe(instrumentName?: InstrumentName | string): void {
+  tradeSubscribe(instrumentName?: InstrumentName | string): string {
     let channel = 'trade';
     if (instrumentName) channel += `.${instrumentName}`;
-    this.subscribe([channel]);
+    this.subscribe(channel);
+    return channel;
   }
 
-  candlestick(instrumentName: InstrumentName | string, period: Interval): void {
+  candlestickSubscribe(instrumentName: InstrumentName | string, period: Interval): string {
     const channel = `candlestick.${period}.${instrumentName}`;
-    this.subscribe([channel]);
+    this.subscribe(channel);
+    return channel;
   }
 }
