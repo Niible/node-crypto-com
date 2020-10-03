@@ -1,12 +1,12 @@
 import WebSocket from 'ws';
 import ReconnectingWebSocket from 'reconnecting-websocket';
+import { hasOwnProperty, sleep } from '../../utils';
 import {
   PublicMethod,
-} from '../../types/crypto.h';
-import { sleep } from '../../utils/sleep';
-import { hasOwnProperty } from '../../utils/hasOwnProperty';
-import { Request } from '../../types/api.types';
-import { Result, SubscriptionResponse } from '../../types/websocket.types';
+  Request,
+  Result,
+  SubscriptionResponse,
+} from '../../types';
 
 export class CryptoWebsocketBase {
   public isAuthenticated = false;

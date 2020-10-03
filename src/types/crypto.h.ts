@@ -216,6 +216,8 @@ export interface Order {
   avg_price: number
   fee_currency: Currency
   time_in_force: TimeInForce
+  price_trigger?: number
+  reason?: string
 }
 
 export interface TradeList {
@@ -245,6 +247,8 @@ export interface OrderInfo {
   fee_currency: Currency
   time_in_force: TimeInForce
   exec_inst: ExecInst
+  price_trigger?: number
+  reason?: string
 }
 
 export enum ExecInst {

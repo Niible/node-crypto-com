@@ -1,7 +1,7 @@
 import { RateLimitExt } from 'rate-limit-ext';
 import Axios, { AxiosStatic } from 'axios';
 import { HmacSHA256, enc } from 'crypto-js';
-import { Request, Options, Response } from '../../types/api.types';
+import { Request, Options, Response } from '../../types';
 
 export class CryptoApiBase {
   protected apiSecret: string;

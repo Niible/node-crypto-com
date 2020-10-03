@@ -5,13 +5,13 @@ import {
   GetTickerResponse,
   GetTradesResponse,
   GetCandlestickResponse,
+  PublicMethod,
   Response,
   GetBookParams,
   GetTickerParams,
   GetTradesParams,
   GetCandlestrickParams,
-} from '../../types/api.types';
-import { PublicMethod } from '../../types';
+} from '../../types';
 
 export class CryptoPublicApi extends CryptoApiBase {
   public async getInstruments(): Promise<Response<GetInstrumentsResponse>> {

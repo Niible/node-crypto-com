@@ -6,18 +6,16 @@ import {
   OrderType,
   OrderSide,
   InstrumentName,
-} from '../../types';
-import {
-  CreateOrderParams,
-  CancelOrderParams,
+  GetAccountSummaryParams,
+  Request,
   CancelAllOrdersParams,
-  GetOrderHistory,
+  CancelOrderParams,
+  CreateOrderParams,
   GetOpenOrdersParams,
   GetOrderDetailParams,
+  GetOrderHistory,
   GetTradesParams,
-  Request,
-  GetAccountSummaryParams,
-} from '../../types/api.types';
+} from '../../types';
 
 export class CryptoWebsocketUser extends CryptoWebsocketBase {
   constructor(apiKey: string, apiSecret: string) {

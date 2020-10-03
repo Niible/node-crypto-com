@@ -1,7 +1,7 @@
 import { CryptoWebsocketBase } from './crypto.websocket.base';
 import {
   InstrumentName, Interval,
-} from '../../types/crypto.h';
+} from '../../types';
 
 export class CryptoWebsocketMarket extends CryptoWebsocketBase {
   constructor(apiKey: string, apiSecret: string) {

@@ -17,8 +17,10 @@ import {
   GetTradesParams,
   Response,
   GetPrivateTradesResponse,
-} from '../../types/api.types';
-import { PrivateMethod, OrderType, OrderSide } from '../../types';
+  OrderSide,
+  OrderType,
+  PrivateMethod,
+} from '../../types';
 
 export class CryptoPrivateApi extends CryptoApiBase {
   public async getAccountSummary(

@@ -17,7 +17,7 @@ import {
   GetOrderOpenOrdersResponse,
   GetOrderDetailResponse,
   GetTradesResponse,
-} from './api.types';
+} from './api.types.h';
 
 export enum WebsocketType {
   Market,
