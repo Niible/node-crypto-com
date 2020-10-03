@@ -24,7 +24,7 @@ import {
   TradeSubscription,
   CandlestickSubscription,
 } from "../src/types/websocket.types";
-import { GetOrderDetailResponse, GetOrderDetailParams, OrderDetailResult } from "../src/types/api.types";
+import { OrderDetailResult } from "../src/types/api.types";
 
 config();
 
