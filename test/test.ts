@@ -10,7 +10,12 @@ import {
   OrderType,
   Interval,
   PrivateMethod,
-} from "../src/types/crypto.h";
+  BookSubscription,
+  CandlestickSubscription,
+  OrderDetailResult,
+  TickerSubscription,
+  TradeSubscription
+} from "../src/types";
 import {
   CryptoWebsocket,
   CryptoWebsocketUser,
@@ -18,13 +23,6 @@ import {
 } from "../src/cryptoClient/websocket";
 import { config } from "dotenv";
 import { expect } from "chai";
-import {
-  BookSubscription,
-  TickerSubscription,
-  TradeSubscription,
-  CandlestickSubscription,
-} from "../src/types/websocket.types";
-import { OrderDetailResult } from "../src/types/api.types";
 
 config();
 
