@@ -336,7 +336,7 @@ describe("Test GetOrderDetail", function () {
     process.env.SECRET_KEY
   );
 
-  it("getOrderDetqil should work ", async () => {
+  it("getOrderDetail should work ", async () => {
     await user.waitWebsocket();
     user.authenticate()
     const event = user.getOrderDetail({

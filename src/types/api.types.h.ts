@@ -232,7 +232,7 @@ export interface GetOrderDetailResponse extends ResponseDefaultAttribute {
 
 export interface OrderDetailResult {
   trade_list: TradeList[]
-  order_info: OrderInfo[]
+  order_info: OrderInfo
 }
 
 export interface GetPrivateTradesResponse extends ResponseDefaultAttribute {
